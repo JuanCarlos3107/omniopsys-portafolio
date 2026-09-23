@@ -1,0 +1,55 @@
+-- ============================================================
+-- Tabla   : OMNI_USUARIOS
+-- Módulo  : GLOBAL (usuarios del sistema)
+-- Autor   : [JCFB]
+-- Fecha   : 2026-09-20
+-- Desc    : Usuarios globales del sistema OmniOpsys
+-- ============================================================
+
+CREATE TABLE OMNIOPS.OMNI_USUARIOS (
+    ID_USUARIO              NUMBER(10)      GENERATED ALWAYS AS IDENTITY,
+    CODIGO_USUARIO          NUMBER(10)      NOT NULL,
+    USERNAME_USUARIO        VARCHAR2(50)    NOT NULL,
+    EMAIL_USUARIO           VARCHAR2(100)   NOT NULL,
+    NOMBRE_USUARIO          VARCHAR2(100)   NOT NULL,
+    PASSWORD_HASH_USUARIO   VARCHAR2(200),
+    TELEFONO_USUARIO        VARCHAR2(30),
+    ES_SUPER_ADMIN_USUARIO  VARCHAR2(1)     DEFAULT 'N' NOT NULL,
+    ESTADO_USUARIO          VARCHAR2(10)    DEFAULT 'ACTIVO' NOT NULL,
+    ULTIMO_ACCESO_USUARIO   DATE,
+    FECHA_ALTA_USUARIO      DATE            DEFAULT SYSDATE NOT NULL,
+    USR_CREA_USUARIO        VARCHAR2(50),
+    FECHA_MOD_USUARIO       DATE,
+    USR_MOD_USUARIO         VARCHAR2(50),
+    --
+    CONSTRAINT PK_OMNI_USUARIOS
+        PRIMARY KEY (ID_USUARIO),
+    CONSTRAINT UQ_OMNI_USUARIOS_CODIGO
+        UNIQUE (CODIGO_USUARIO),
+    CONSTRAINT UQ_OMNI_USUARIOS_USERNAME
+        UNIQUE (USERNAME_USUARIO),
+    CONSTRAINT UQ_OMNI_USUARIOS_EMAIL
+        UNIQUE (EMAIL_USUARIO),
+    CONSTRAINT CK_OMNI_USUARIOS_SUPERADMIN
+        CHECK (ES_SUPER_ADMIN_USUARIO IN ('S','N')),
+    CONSTRAINT CK_OMNI_USUARIOS_ESTADO
+        CHECK (ESTADO_USUARIO IN ('ACTIVO','INACTIVO','BLOQUEADO'))
+);
+
+COMMENT ON TABLE OMNIOPS.OMNI_USUARIOS IS
+    'Usuarios globales del sistema OmniOpsys. Se vinculan a empresas mediante OMNI_USUARIO_EMPRESA y a roles mediante OMNI_USUARIO_ROL.';
+
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.ID_USUARIO             IS 'Identificador único del usuario (PK)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.CODIGO_USUARIO         IS 'Código numérico del usuario (usado en lógica del sistema)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.USERNAME_USUARIO       IS 'Nombre de usuario único para login';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.EMAIL_USUARIO          IS 'Email único del usuario';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.NOMBRE_USUARIO         IS 'Nombre completo del usuario';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.PASSWORD_HASH_USUARIO  IS 'Hash de la contraseña (si no se usa APEX nativo)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.TELEFONO_USUARIO       IS 'Teléfono de contacto';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.ES_SUPER_ADMIN_USUARIO IS 'Indica si el usuario es super administrador global (S/N)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.ESTADO_USUARIO         IS 'Estado del usuario: ACTIVO / INACTIVO / BLOQUEADO';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.ULTIMO_ACCESO_USUARIO  IS 'Fecha y hora del último acceso al sistema';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.FECHA_ALTA_USUARIO     IS 'Fecha en que se dio de alta el usuario';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.USR_CREA_USUARIO       IS 'Usuario que creó el registro (auditoría)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.FECHA_MOD_USUARIO      IS 'Fecha de última modificación (auditoría)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIOS.USR_MOD_USUARIO        IS 'Usuario que modificó el registro (auditoría)';

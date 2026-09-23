@@ -1,0 +1,53 @@
+-- ============================================================
+-- Tabla   : OMNI_USUARIO_ROL
+-- Módulo  : GLOBAL (relación usuario ↔ rol ↔ empresa)
+-- Autor   : [JCF]
+-- Fecha   : 2026-09-21
+-- Desc    : Asignación de roles a usuarios en contexto de empresa
+-- ============================================================
+
+CREATE TABLE OMNIOPS.OMNI_USUARIO_ROL (
+    ID_USUARIO_ROL           NUMBER(10)      GENERATED ALWAYS AS IDENTITY,
+    CODIGO_USUARIO_ROL       NUMBER(10)      NOT NULL,
+    ID_USUARIO               NUMBER(10)      NOT NULL,
+    ID_ROL                   NUMBER(5)       NOT NULL,
+    ID_EMPRESA               NUMBER(10)      NOT NULL,
+    ESTADO_USUARIO_ROL       VARCHAR2(15)    DEFAULT 'ACTIVO' NOT NULL,
+    FECHA_ASIGNACION         DATE            DEFAULT SYSDATE NOT NULL,
+    OBSERVACION_USUARIO_ROL  VARCHAR2(300),
+    FECHA_ALTA_USUARIO_ROL   DATE            DEFAULT SYSDATE NOT NULL,
+    USR_CREA_USUARIO_ROL     VARCHAR2(50),
+    FECHA_MOD_USUARIO_ROL    DATE,
+    USR_MOD_USUARIO_ROL      VARCHAR2(50),
+    --
+    CONSTRAINT PK_OMNI_USUARIO_ROL
+        PRIMARY KEY (ID_USUARIO_ROL),
+    CONSTRAINT UQ_OMNI_USR_ROL_CODIGO
+        UNIQUE (CODIGO_USUARIO_ROL),
+    CONSTRAINT FK_OMNI_USR_ROL_USUARIO
+        FOREIGN KEY (ID_USUARIO) REFERENCES OMNIOPS.OMNI_USUARIOS (ID_USUARIO),
+    CONSTRAINT FK_OMNI_USR_ROL_ROL
+        FOREIGN KEY (ID_ROL) REFERENCES OMNIOPS.OMNI_ROLES (ID_ROL),
+    CONSTRAINT FK_OMNI_USR_ROL_EMPRESA
+        FOREIGN KEY (ID_EMPRESA) REFERENCES OMNIOPS.OMNI_EMPRESAS (ID_EMPRESA),
+    CONSTRAINT UQ_OMNI_USR_ROL_USR_ROL_EMP
+        UNIQUE (ID_USUARIO, ID_ROL, ID_EMPRESA),
+    CONSTRAINT CK_OMNI_USR_ROL_ESTADO
+        CHECK (ESTADO_USUARIO_ROL IN ('ACTIVO','SUSPENDIDO','INACTIVO'))
+);
+
+COMMENT ON TABLE OMNIOPS.OMNI_USUARIO_ROL IS
+    'Asignación de roles a usuarios en contexto de una empresa específica. Un usuario puede tener distintos roles en distintas empresas.';
+
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.ID_USUARIO_ROL         IS 'Identificador único del registro (PK)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.CODIGO_USUARIO_ROL     IS 'Código numérico del registro (usado en lógica del sistema)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.ID_USUARIO             IS 'Usuario asignado (FK a OMNI_USUARIOS)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.ID_ROL                 IS 'Rol asignado (FK a OMNI_ROLES)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.ID_EMPRESA             IS 'Empresa en la que aplica el rol (FK a OMNI_EMPRESAS)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.ESTADO_USUARIO_ROL     IS 'Estado de la asignación: ACTIVO / SUSPENDIDO / INACTIVO';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.FECHA_ASIGNACION       IS 'Fecha en que se asignó el rol al usuario';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.OBSERVACION_USUARIO_ROL IS 'Observaciones sobre la asignación';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.FECHA_ALTA_USUARIO_ROL IS 'Fecha de alta del registro (auditoría)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.USR_CREA_USUARIO_ROL   IS 'Usuario que creó el registro (auditoría)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.FECHA_MOD_USUARIO_ROL  IS 'Fecha de última modificación (auditoría)';
+COMMENT ON COLUMN OMNIOPS.OMNI_USUARIO_ROL.USR_MOD_USUARIO_ROL    IS 'Usuario que modificó el registro (auditoría)';
