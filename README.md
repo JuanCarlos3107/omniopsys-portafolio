@@ -1,4 +1,4 @@
-# OmniOpsys — Sistema Modular Multiempresa (Cuotero)
+# OmniOpsys — Sistema Modular Multiempresa
 
 Sistema modular de gestión empresarial construido sobre **Oracle APEX 21c**, con arquitectura multiempresa y multi-módulo. El primer módulo implementado es **Finanzas**, que incluye un sistema completo de cuotero (proformas, aprobaciones, cobros, mora y cierre de plan).
 
