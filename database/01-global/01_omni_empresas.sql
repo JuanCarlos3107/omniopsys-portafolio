@@ -1,7 +1,7 @@
 -- ============================================================
 -- Tabla   : OMNI_EMPRESAS
 -- Módulo  : GLOBAL (transversal a todos los módulos)
--- Autor   : [tu nombre]
+-- Autor   : [JCFB]
 -- Fecha   : 2026-09-19
 -- Desc    : Tabla maestra de empresas del sistema OmniOpsys
 -- ============================================================

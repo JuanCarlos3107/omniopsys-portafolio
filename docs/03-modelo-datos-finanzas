@@ -1,0 +1,410 @@
+# OmniOpsys — Modelo de Datos: Módulo Finanzas
+
+**Autor:** Juan Carlos Fernández Bobadilla
+**Fecha:** 2026-09-23
+**Módulo:** Finanzas (F) — Sistema Cuotero
+**Prefijo de tablas:** `OMNI_F_`
+
+---
+
+## 1. Visión general
+
+El módulo Finanzas implementa un **sistema cuotero completo** que cubre
+el flujo end-to-end modelado en el BPMN:
+
+1. Registro de cliente + plan de cuotas
+2. Generación de proforma
+3. Aceptación del cliente
+4. Validación por Finanzas (evaluación crediticia)
+5. Aprobación (automática o manual)
+6. Generación de cuotas
+7. Cobro (manual o débito automático)
+8. Mora y recargos
+9. Notificaciones al cliente
+10. Cierre del plan
+
+---
+
+## 2. Tablas del módulo
+
+### 2.1 OMNI_F_CLIENTES
+
+Clientes del cuotero. Referencia a `OMNI_PERSONAS` para datos personales.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_CLIENTE | NUMBER(10) PK | Identificador |
+| CODIGO_CLIENTE | NUMBER(10) UNIQUE | Código de lógica |
+| ID_EMPRESA | FK | Empresa |
+| ID_PERSONA | FK | Persona asociada |
+| INGRESO_DECLARADO_CLIENTE | NUMBER(14,2) | Ingreso mensual declarado |
+| SCORE_CREDITICIO_CLIENTE | NUMBER(5) | Score interno |
+| ESTADO_CLIENTE | VARCHAR2(10) | ACTIVO / INACTIVO / BLOQUEADO |
+| Auditoría | | |
+
+### 2.2 OMNI_F_PLANES
+
+Planes cuotero / productos financieros.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_PLAN | NUMBER(10) PK | Identificador |
+| CODIGO_PLAN | NUMBER(10) UNIQUE | Código de lógica |
+| ID_EMPRESA | FK | Empresa |
+| NOMBRE_PLAN | VARCHAR2(100) | Nombre del plan |
+| MONTO_MINIMO_PLAN / MONTO_MAXIMO_PLAN | NUMBER(14,2) | Rango financiable |
+| NUM_CUOTAS_PLAN | NUMBER(3) | Cantidad de cuotas |
+| TASA_INTERES_MENSUAL_PLAN | NUMBER(8,4) | Interés mensual |
+| TASA_MORA_DIARIA_PLAN | NUMBER(8,4) | Mora diaria |
+| PORC_ENTRADA_PLAN | NUMBER(8,4) | % de entrada |
+| REQUIERE_APROBACION_PLAN | VARCHAR2(1) | S/N |
+| ESTADO_PLAN | VARCHAR2(10) | ACTIVO / INACTIVO |
+| Auditoría | | |
+
+### 2.3 OMNI_F_PROFORMAS
+
+Cabecera del expediente. Corazón del flujo.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_PROFORMA | NUMBER(10) PK | Identificador |
+| CODIGO_PROFORMA | NUMBER(10) UNIQUE | Código de lógica |
+| ID_EMPRESA / ID_CLIENTE / ID_PLAN | FK | Referencias |
+| ID_USUARIO_ASESOR | FK | Asesor que cargó |
+| ID_USUARIO_APROBADOR | FK | Aprobador (si aplica) |
+| NUMERO_PROFORMA | VARCHAR2(30) | Número visible |
+| MONTO_SOLICITADO_PROFORMA | NUMBER(14,2) | Monto pedido |
+| MONTO_FINANCIADO_PROFORMA | NUMBER(14,2) | Monto financiado |
+| NUM_CUOTAS_PROFORMA | NUMBER(3) | Cuotas |
+| MONTO_CUOTA_PROFORMA | NUMBER(14,2) | Valor por cuota |
+| MONTO_TOTAL_PROFORMA | NUMBER(16,2) | Total a pagar |
+| FORMA_PAGO_VENTA_PROFORMA | VARCHAR2(20) | CONTADO / CREDITO / CUOTAS / TARJETA |
+| ESTADO_PROFORMA | VARCHAR2(20) | 9 estados del flujo |
+| Observaciones | | Por etapa |
+| Auditoría | | |
+
+< Estados del flujo:> 
+`BORRADOR` → `PENDIENTE_CLIENTE` → `ACEPTADA_CLIENTE` → `EN_VALIDACION` →
+`EN_APROBACION` → `APROBADA` → `CERRADA`
+(Ramas: `RECHAZADA`, `ANULADA`)
+
+### 2.4 OMNI_F_EVALUACIONES
+
+Evaluación crediticia de cada proforma.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_EVALUACION | NUMBER(10) PK | Identificador |
+| ID_PROFORMA | FK | Proforma evaluada |
+| ID_USUARIO_FINANZAS | FK | Quién evaluó |
+| INGRESO_VERIFICADO_EVAL | NUMBER(14,2) | Ingreso verificado |
+| CAPACIDAD_PAGO_EVAL | NUMBER(14,2) | Capacidad calculada |
+| RELACION_CUOTA_INGRESO_EVAL | NUMBER(8,4) | Ratio cuota/ingreso |
+| CUMPLE_REGLAS_AUTO_EVAL | VARCHAR2(1) | S/N |
+| RESULTADO_EVALUACION | VARCHAR2(20) | APROBADO_AUTO / REVISION_MANUAL / RECHAZADO |
+| Auditoría | | |
+
+### 2.5 OMNI_F_HIST_APROBACIONES
+
+Trazabilidad de acciones sobre proformas.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_HIST_APROBACION | NUMBER(10) PK | Identificador |
+| ID_PROFORMA | FK | Proforma |
+| ID_USUARIO_ACCION | FK | Usuario que actuó |
+| ROL_USUARIO_ACCION | VARCHAR2(20) | Rol con el que actuó |
+| ACCION_HIST_APROBACION | VARCHAR2(20) | Acción ejecutada |
+| ESTADO_ANTERIOR_PROFORMA | VARCHAR2(20) | Estado antes |
+| ESTADO_NUEVO_PROFORMA | VARCHAR2(20) | Estado después |
+| COMENTARIO_HIST_APROBACION | VARCHAR2(500) | Comentario |
+| FECHA_ACCION | DATE | Cuándo ocurrió |
+| Auditoría | | |
+
+### 2.6 OMNI_F_TERMINOS_ACEPTADOS
+
+Aceptación de términos por el cliente.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_TERMINO_ACEPTADO | NUMBER(10) PK | Identificador |
+| ID_PROFORMA / ID_CLIENTE | FK | Referencias |
+| VERSION_TERMINOS | VARCHAR2(20) | Versión aceptada |
+| ACEPTA_TERMINOS | VARCHAR2(1) | S/N |
+| ACEPTA_DEBITO_AUTOMATICO | VARCHAR2(1) | S/N |
+| ACEPTA_NOTIFICACIONES | VARCHAR2(1) | S/N |
+| FECHA_ACEPTACION_TERMINO | DATE | Cuándo aceptó |
+| IP_ACEPTACION_TERMINO | VARCHAR2(45) | Evidencia legal |
+| URL_DOCUMENTO_TERMINOS | VARCHAR2(500) | URL del PDF |
+| Auditoría | | |
+
+### 2.7 OMNI_F_ENTIDADES_PAGO
+
+Catálogo unificado de entidades de pago.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_ENTIDAD_PAGO | NUMBER(10) PK | Identificador |
+| ID_EMPRESA | FK | Empresa |
+| NOMBRE_ENTIDAD_PAGO | VARCHAR2(150) | Nombre completo |
+| NOMBRE_CORTO_ENTIDAD_PAGO | VARCHAR2(50) | Nombre corto |
+| TIPO_ENTIDAD_PAGO | VARCHAR2(25) | BANCO / PROCESADORA_TARJETA / PROCESADORA_QR / BILLETERA / FINANCIERA / CAJERO / OTRO |
+| PAIS_ENTIDAD_PAGO | VARCHAR2(50) | País |
+| CODIGO_SWIFT_ENTIDAD_PAGO | VARCHAR2(20) | SWIFT |
+| CODIGO_BCP_ENTIDAD_PAGO | VARCHAR2(20) | Código BCP |
+| COMISION_PORC_ENTIDAD_PAGO | NUMBER(8,4) | Comisión |
+| DIAS_ACREDITACION_ENTIDAD | NUMBER(5) | Días de acreditación |
+| Auditoría | | |
+
+### 2.8 OMNI_F_CUENTAS_BANCARIAS
+
+Cuentas bancarias de clientes para débito automático.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_CUENTA_BANCARIA | NUMBER(10) PK | Identificador |
+| ID_CLIENTE / ID_ENTIDAD_PAGO | FK | Referencias |
+| TIPO_CUENTA_BANCARIA | VARCHAR2(20) | AHORRO / CORRIENTE / PLAZO_FIJO / OTRA |
+| NRO_CUENTA_BANCARIA | VARCHAR2(30) | Número (enmascarado) |
+| CBU_ALIAS_CUENTA_BANCARIA | VARCHAR2(50) | CBU o alias |
+| TITULAR_CUENTA_BANCARIA | VARCHAR2(150) | Titular |
+| AUTORIZA_DEBITO_CUENTA | VARCHAR2(1) | S/N |
+| ES_CUENTA_PRINCIPAL | VARCHAR2(1) | S/N |
+| ESTADO_CUENTA_BANCARIA | VARCHAR2(15) | ACTIVO / SUSPENDIDO / INACTIVO |
+| Auditoría | | |
+
+### 2.9 OMNI_F_TARJETAS_CLIENTE
+
+Tarjetas de clientes para débito automático vía tarjeta.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_TARJETA_CLIENTE | NUMBER(10) PK | Identificador |
+| ID_CLIENTE / ID_ENTIDAD_PAGO | FK | Referencias |
+| TIPO_TARJETA_CLIENTE | VARCHAR2(15) | DEBITO / CREDITO |
+| MARCA_TARJETA_CLIENTE | VARCHAR2(20) | VISA / MASTERCARD / AMEX / DINERS / CABAL / OTRA |
+| NRO_TARJETA_ENMASCARADO | VARCHAR2(20) | ****1234 |
+| NOMBRE_TITULAR_TARJETA | VARCHAR2(150) | Titular |
+| FECHA_VENCIMIENTO_TARJETA | VARCHAR2(7) | MM/YYYY |
+| AUTORIZA_DEBITO_TARJETA | VARCHAR2(1) | S/N |
+| ES_TARJETA_PRINCIPAL | VARCHAR2(1) | S/N |
+| ESTADO_TARJETA_CLIENTE | VARCHAR2(15) | ACTIVA / VENCIDA / BLOQUEADA / INACTIVA |
+| Auditoría | | |
+
+### 2.10 OMNI_F_CUOTAS
+
+<Tabla central del flujo.>  Cada cuota generada.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_CUOTA | NUMBER(10) PK | Identificador |
+| CODIGO_CUOTA | NUMBER(10) UNIQUE | Código de lógica |
+| ORIGEN_CUOTA | VARCHAR2(20) | FINANZAS / VENTAS / MANUAL |
+| ID_ORIGEN_CUOTA | NUMBER(10) | ID del origen |
+| ID_CLIENTE | FK | Cliente |
+| NUM_CUOTA / NUM_TOTAL_CUOTAS | NUMBER(3) | Numeración |
+| MONTO_CAPITAL_CUOTA / MONTO_INTERES_CUOTA / MONTO_MORA_CUOTA | NUMBER(14,2) | Desglose |
+| MONTO_TOTAL_CUOTA | NUMBER(14,2) | Total |
+| MONTO_PAGADO_CUOTA | NUMBER(14,2) | Pagado |
+| SALDO_PENDIENTE_CUOTA | NUMBER(14,2) | Saldo |
+| FECHA_VENCIMIENTO_CUOTA | DATE | Vencimiento |
+| FECHA_PAGO_CUOTA | DATE | Fecha de pago |
+| ESTADO_CUOTA | VARCHAR2(15) | PENDIENTE / PARCIAL / PAGADA / EN_MORA / CANCELADA / ANULADA |
+| DIAS_ATRASO_CUOTA | NUMBER(5) | Días de atraso |
+| Auditoría | | |
+
+### 2.11 OMNI_F_PAGOS
+
+Pagos registrados sobre cuotas.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_PAGO | NUMBER(10) PK | Identificador |
+| ID_CUOTA / ID_CLIENTE | FK | Referencias |
+| NUMERO_RECIBO_PAGO | VARCHAR2(30) | Recibo (único por empresa) |
+| FECHA_PAGO | DATE | Fecha |
+| MONTO_PAGO | NUMBER(14,2) | Monto |
+| MEDIO_PAGO | VARCHAR2(20) | EFECTIVO / TRANSFERENCIA / TARJETA / QR / CHEQUE / DEBITO_AUTO / OTRO |
+| ID_ENTIDAD_PAGO / ID_CUENTA_BANCARIA | FK | Referencias |
+| TIPO_TARJETA_PAGO / MARCA_TARJETA_PAGO / NRO_TARJETA_PAGO | | Datos de tarjeta |
+| NRO_CHEQUE_PAGO / NRO_TRANSACCION_PAGO | VARCHAR2 | Referencias |
+| ID_USUARIO_CAJA | FK | Quién registró |
+| ESTADO_CONCILIACION_PAGO | VARCHAR2(15) | PENDIENTE / CONCILIADO / RECHAZADO |
+| Auditoría | | |
+
+### 2.12 OMNI_F_INTENTOS_DEBITO
+
+Intentos de débito automático (cuenta o tarjeta).
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_INTENTO_DEBITO | NUMBER(10) PK | Identificador |
+| ID_CUOTA / ID_CLIENTE | FK | Referencias |
+| ORIGEN_DEBITO_INTENTO | VARCHAR2(15) | CUENTA / TARJETA |
+| ID_CUENTA_BANCARIA / ID_TARJETA_CLIENTE | FK | Según origen |
+| ID_ENTIDAD_PAGO | FK | Banco/procesadora |
+| ID_PAGO | FK | Si el intento fue exitoso |
+| FECHA_INTENTO_DEBITO / MONTO_INTENTO_DEBITO | | Datos |
+| RESULTADO_INTENTO_DEBITO | VARCHAR2(15) | EXITOSO / FALLIDO / PENDIENTE / RECHAZADO |
+| CODIGO_RESPUESTA_DEBITO / MENSAJE_RESPUESTA_DEBITO / NRO_TRANSACCION_DEBITO | | Respuestas |
+| NUMERO_REINTENTO_DEBITO | NUMBER(3) | Reintento |
+| Auditoría | | |
+
+### 2.13 OMNI_F_MORAS
+
+Cálculo de mora y recargos por atraso.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_MORA | NUMBER(10) PK | Identificador |
+| ID_CUOTA / ID_CLIENTE | FK | Referencias |
+| FECHA_CALCULO_MORA | DATE | Fecha de cálculo |
+| DIAS_ATRASO_MORA | NUMBER(5) | Días de atraso |
+| TASA_MORA_DIARIA_APLICADA | NUMBER(8,4) | Tasa aplicada |
+| MONTO_BASE_MORA | NUMBER(14,2) | Base |
+| MONTO_MORA_CALCULADA / MONTO_RECARGO_ADICIONAL / MONTO_MORA_TOTAL | NUMBER(14,2) | Montos |
+| ESTADO_MORA | VARCHAR2(15) | ACTIVA / COBRADA / CONDONADA / ANULADA |
+| Auditoría | | |
+
+### 2.14 OMNI_F_NOTIFICACIONES
+
+Notificaciones enviadas al cliente.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_NOTIFICACION | NUMBER(10) PK | Identificador |
+| ID_CLIENTE | FK | Destinatario |
+| ID_CUOTA / ID_PROFORMA | FK | Opcional |
+| TIPO_NOTIFICACION | VARCHAR2(30) | VENCIMIENTO_PROXIMO / MORA / PAGO_RECIBIDO / APROBACION / RECHAZO / BIENVENIDA / RECORDATORIO / CIERRE_PLAN / OTRA |
+| CANAL_NOTIFICACION | VARCHAR2(15) | EMAIL / SMS / WHATSAPP / INTERNO / PUSH |
+| DESTINO_NOTIFICACION / ASUNTO_NOTIFICACION / MENSAJE_NOTIFICACION | | Contenido |
+| ESTADO_NOTIFICACION | VARCHAR2(15) | PENDIENTE / ENVIADA / FALLIDA / LEIDA / CANCELADA |
+| FECHA_PROGRAMADA_NOTIFICACION / FECHA_ENVIO_NOTIFICACION / FECHA_LECTURA_NOTIFICACION | DATE | Fechas |
+| INTENTOS_ENVIO_NOTIFICACION | NUMBER(3) | Reintentos |
+| Auditoría | | |
+
+### 2.15 OMNI_F_CIERRES_PLAN
+
+Cierre del plan cuando todas las cuotas fueron canceladas.
+
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| ID_CIERRE_PLAN | NUMBER(10) PK | Identificador |
+| ID_PROFORMA (UNIQUE) / ID_CLIENTE | FK | Referencias |
+| ID_USUARIO_CAJA | FK | Quién cerró |
+| NUMERO_COMPROBANTE_CIERRE | VARCHAR2(30) | Comprobante final |
+| FECHA_CIERRE_PLAN | DATE | Fecha de cierre |
+| TOTAL_CAPITAL_PAGADO / TOTAL_INTERES_PAGADO / TOTAL_MORA_PAGADA | NUMBER(16,2) | Desglose |
+| TOTAL_PAGADO_CIERRE / TOTAL_CONDONADO_CIERRE | NUMBER(16,2) | Totales |
+| CANTIDAD_CUOTAS_TOTAL / CANTIDAD_CUOTAS_PAGADAS | NUMBER(3) | Cuotas |
+| TIPO_CIERRE_PLAN | VARCHAR2(20) | NORMAL / ANTICIPADO / ACUERDO / CONDONADO / JUDICIAL |
+| URL_COMPROBANTE_CIERRE | VARCHAR2(500) | URL del PDF |
+| ESTADO_CIERRE_PLAN | VARCHAR2(15) | CERRADO / ANULADO |
+| Auditoría | | |
+
+---
+
+## 3. Diagrama de relaciones del módulo Finanzas
+
+```
+OMNI_PERSONAS ──1:N── OMNI_F_CLIENTES
+OMNI_EMPRESAS ──1:N── OMNI_F_CLIENTES
+
+OMNI_F_PLANES ──1:N── OMNI_F_PROFORMAS
+OMNI_F_CLIENTES ──1:N── OMNI_F_PROFORMAS
+OMNI_USUARIOS ──1:N── OMNI_F_PROFORMAS (asesor / aprobador)
+
+OMNI_F_PROFORMAS ──1:N── OMNI_F_EVALUACIONES
+OMNI_F_PROFORMAS ──1:N── OMNI_F_HIST_APROBACIONES
+OMNI_F_PROFORMAS ──1:1── OMNI_F_TERMINOS_ACEPTADOS
+OMNI_F_PROFORMAS ──1:N── OMNI_F_CUOTAS (origen FINANZAS)
+OMNI_F_PROFORMAS ──1:1── OMNI_F_CIERRES_PLAN
+
+OMNI_F_ENTIDADES_PAGO ──1:N── OMNI_F_CUENTAS_BANCARIAS
+OMNI_F_ENTIDADES_PAGO ──1:N── OMNI_F_TARJETAS_CLIENTE
+OMNI_F_CLIENTES ──1:N── OMNI_F_CUENTAS_BANCARIAS
+OMNI_F_CLIENTES ──1:N── OMNI_F_TARJETAS_CLIENTE
+
+OMNI_F_CUOTAS ──1:N── OMNI_F_PAGOS
+OMNI_F_CUOTAS ──1:N── OMNI_F_INTENTOS_DEBITO
+OMNI_F_CUOTAS ──1:N── OMNI_F_MORAS
+
+OMNI_F_CLIENTES ──1:N── OMNI_F_NOTIFICACIONES
+```
+
+---
+
+## 4. Flujo del proceso en la BD
+
+| Paso del BPMN | Tabla que lo registra |
+|---------------|----------------------|
+| Registra cliente | `OMNI_F_CLIENTES` |
+| Registra plan | `OMNI_F_PLANES` |
+| Genera proforma | `OMNI_F_PROFORMAS` |
+| Cliente acepta | `OMNI_F_TERMINOS_ACEPTADOS` |
+| Finanzas evalúa | `OMNI_F_EVALUACIONES` |
+| Aprobador decide | `OMNI_F_HIST_APROBACIONES` |
+| Formaliza plan | `OMNI_F_PROFORMAS` (estado APROBADA) |
+| Programa vencimientos | `OMNI_F_CUOTAS` |
+| Configura cobro | `OMNI_F_CUENTAS_BANCARIAS` / `OMNI_F_TARJETAS_CLIENTE` |
+| Ejecuta débito | `OMNI_F_INTENTOS_DEBITO` |
+| Registra pago | `OMNI_F_PAGOS` |
+| Concilia pago | `OMNI_F_PAGOS` (estado CONCILIADO) |
+| Calcula mora | `OMNI_F_MORAS` |
+| Notifica | `OMNI_F_NOTIFICACIONES` |
+| Cierra plan | `OMNI_F_CIERRES_PLAN` |
+
+---
+
+## 5. Estados del flujo de una proforma
+
+```
+BORRADOR
+  ↓
+PENDIENTE_CLIENTE ─── RECHAZADA
+  ↓
+ACEPTADA_CLIENTE
+  ↓
+EN_VALIDACION
+  ↓
+EN_APROBACION ─── RECHAZADA → vuelve a BORRADOR
+  ↓
+APROBADA
+  ↓
+(Genera cuotas → cobros → mora)
+  ↓
+CERRADA
+```
+
+<(En cualquier momento: ANULADA)>
+
+---
+
+## 6. Cardinalidades clave
+
+| Relación | Cardinalidad |
+|----------|--------------|
+| Cliente → Proformas | 1:N |
+| Proforma → Evaluaciones | 1:N |
+| Proforma → Historial | 1:N |
+| Proforma → Términos aceptados | 1:1 |
+| Proforma → Cuotas | 1:N |
+| Proforma → Cierre | 1:1 |
+| Cuota → Pagos | 1:N |
+| Cuota → Intentos débito | 1:N |
+| Cuota → Moras | 1:N |
+| Cliente → Cuentas bancarias | 1:N |
+| Cliente → Tarjetas | 1:N |
+
+---
+
+## 7. Estado del módulo
+
+| Sub-fase | Estado |
+|----------|--------|
+| Diseño conceptual | ✅ Completado |
+| Creación de tablas | ✅ Completado (16 tablas) |
+| Documentación | ✅ Este documento |
+| Páginas APEX | ⏳ Pendiente (BLOQUE 3) |
+| Lógica PL/SQL | ⏳ Pendiente |
+| Datos de prueba | ⏳ Pendiente |

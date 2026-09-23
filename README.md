@@ -68,13 +68,13 @@ omniopsys-portafolio/
 
 ## Estado del proyecto
 
-| Bloque | Descripción                     | Estado        |
-|--------|---------------------------------|---------------|
-| 1      | Arquitectura global (7 tablas)  | ✅ Completado |
-| 2      | Módulo Finanzas (13 tablas)     | 🔄 En curso   |
-| 3      | Workspace APEX + seguridad      | ⏳ Pendiente  |
-| 4      | Páginas APEX                    | ⏳ Pendiente  |
-| 5      | Documentación final             | ⏳ Pendiente  |
+| Bloque | Descripción                      | Estado        |
+|--------|----------------------------------|---------------|
+| 1      | Arquitectura global (7 tablas)   | ✅ Completado |
+| 2      | Módulo Finanzas (16 tablas)      | ✅ Completado |
+| 3      | Workspace APEX + seguridad       | 🔄 En curso   |
+| 4      | Páginas APEX                     | ⏳ Pendiente  |
+| 5      | Documentación final              | ⏳ Pendiente  |
 
 ---
 
@@ -90,10 +90,9 @@ omniopsys-portafolio/
 
 ## Documentación
 
-- [Arquitectura Global (BLOQUE 1)](docs/01-arquitectura-global.md)
-- [Diagrama BPMN del proceso](docs/imagenes/diagrama_bpmn.png)
-- [Changelog](CHANGELOG.md)
-
+- [Arquitectura Global (BLOQUE 1)](docs/01_arquitectura_global.md)
+- [Glosario de términos](docs/02_glosario.md)
+- [Modelo de datos Finanzas (BLOQUE 2)](docs/03-modelo-datos-finanzas.md)
 ---
 
 ## Autor

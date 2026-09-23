@@ -29,10 +29,27 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
   - Auditoría corta ('USR_CREA_X', 'FECHA_MOD_X', 'USR_MOD_X')
   - Tipos de datos estandarizados para montos y tasas
 
+  ## [0.2.0] - 2026-09-23
+
+### Agregado
+
+- **Módulo Finanzas (BLOQUE 2)** — Sistema Cuotero
+  - 16 tablas creadas:
+    - Globales: `OMNI_PERSONAS`, `OMNI_ARCHIVOS`
+    - Finanzas: `OMNI_F_CLIENTES`, `OMNI_F_PLANES`, `OMNI_F_PROFORMAS`,
+      `OMNI_F_EVALUACIONES`, `OMNI_F_HIST_APROBACIONES`,
+      `OMNI_F_TERMINOS_ACEPTADOS`, `OMNI_F_ENTIDADES_PAGO`,
+      `OMNI_F_CUENTAS_BANCARIAS`, `OMNI_F_TARJETAS_CLIENTE`,
+      `OMNI_F_CUOTAS`, `OMNI_F_PAGOS`, `OMNI_F_INTENTOS_DEBITO`,
+      `OMNI_F_MORAS`, `OMNI_F_NOTIFICACIONES`, `OMNI_F_CIERRES_PLAN`
+- Indicadores de rol en `OMNI_PERSONAS` (`ES_CLIENTE_PERSONA`, `ES_USUARIO_PERSONA`)
+- Documentación del modelo de datos Finanzas (`docs/03-modelo-datos-finanzas.md`)
+- Diagrama BPMN del proceso
+
 ## Notas
 
 - Este es el primer bloque del proyecto. El siguiente es el * BLOQUE 2: Módulo Finanzas *,
-  que incluirá las 13 tablas del sistema cuotero.
+  que incluirá las 14 tablas del sistema cuotero.
 
 ---
 
@@ -40,7 +57,7 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ## Por venir
 
-- BLOQUE 2: Módulo Finanzas (13 tablas)
+- BLOQUE 2: Módulo Finanzas (14 tablas)
 - BLOQUE 3: Workspace APEX + seguridad
 - BLOQUE 4: Páginas APEX
 - BLOQUE 5: Documentación final

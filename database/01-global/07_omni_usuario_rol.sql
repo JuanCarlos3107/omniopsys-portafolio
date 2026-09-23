@@ -1,7 +1,7 @@
 -- ============================================================
 -- Tabla   : OMNI_USUARIO_ROL
 -- Módulo  : GLOBAL (relación usuario ↔ rol ↔ empresa)
--- Autor   : [JCF]
+-- Autor   : [JCFB]
 -- Fecha   : 2026-09-21
 -- Desc    : Asignación de roles a usuarios en contexto de empresa
 -- ============================================================

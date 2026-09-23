@@ -1,7 +1,7 @@
 -- ============================================================
 -- Tabla   : OMNI_ROLES
 -- Módulo  : GLOBAL (catálogo de roles del sistema)
--- Autor   : [JCFB]
+-- Autor   : [JCFB] 
 -- Fecha   : 2026-09-19
 -- Desc    : Roles globales y por programa del sistema OmniOpsys
 -- ============================================================

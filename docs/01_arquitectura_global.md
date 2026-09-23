@@ -187,6 +187,45 @@ Restricciones:
 - UNIQUE (ID_USUARIO, ID_ROL, ID_EMPRESA)
 
 ---
+### 3.8 OMNI_PERSONAS
+
+Personas físicas y jurídicas del sistema. Base común para clientes,
+usuarios, empleados, proveedores, etc.
+
+Campos principales:
+- ID_PERSONA (PK)
+- CODIGO_PERSONA (NUMBER, UNIQUE)
+- TIPO_PERSONA (FISICA / JURIDICA)
+- TIPO_DOCUMENTO_PERSONA (DNI / RUC / PASAPORTE / CI)
+- NRO_DOCUMENTO_PERSONA (UNIQUE con tipo)
+- NOMBRE_PERSONA, NOMBRE_FANTASIA_PERSONA
+- FECHA_NACIMIENTO_PERSONA
+- EMAIL_PERSONA, TELEFONO_PERSONA, CELULAR_PERSONA
+- DIRECCION_PERSONA, CIUDAD_PERSONA, DEPARTAMENTO_PERSONA
+- ESTADO_PERSONA (ACTIVO / INACTIVO / BLOQUEADO)
+- ES_CLIENTE_PERSONA (S/N) — indicador de rol
+- ES_USUARIO_PERSONA (S/N) — indicador de rol
+- Auditoría
+
+<Regla:> este es el "sujeto único" de datos personales.
+Los indicadores de rol se agregan cuando se crea el módulo correspondiente.
+
+### 3.9 OMNI_ARCHIVOS
+
+Metadatos de archivos (logos, documentos, comprobantes).
+No guarda el archivo en sí, solo la URL y datos descriptivos.
+
+Campos principales:
+- ID_ARCHIVO (PK)
+- CODIGO_ARCHIVO (NUMBER, UNIQUE)
+- ID_EMPRESA (FK)
+- TABLA_REFERENCIA (tabla a la que pertenece)
+- ID_REFERENCIA (ID del registro)
+- TIPO_ARCHIVO (LOGO / DNI / CONTRATO / COMPROBANTE...)
+- NOMBRE_ARCHIVO, RUTA_URL_ARCHIVO
+- MIME_TYPE_ARCHIVO, PESO_ARCHIVO_KB
+- ESTADO_ARCHIVO (ACTIVO / ELIMINADO)
+- Auditoría
 
 ## 4. Diagrama de relaciones globales
 
