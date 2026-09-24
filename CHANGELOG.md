@@ -46,6 +46,12 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - Documentación del modelo de datos Finanzas (`docs/03-modelo-datos-finanzas.md`)
 - Diagrama BPMN del proceso
 
+## [0.3.0] - 2026-09-24 (WIP)
+### Agregado
+- Aplicación APEX OmniOpsys creada (ID 101)
+- Tema Vita con Side Menu
+- Logo personalizado
+- Menú de administración oculto (solo admin)
 ## Notas
 
 - Este es el primer bloque del proyecto. El siguiente es el * BLOQUE 2: Módulo Finanzas *,
