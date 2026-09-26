@@ -33,19 +33,20 @@ prompt APPLICATION 101 - OmniOpsys
 -- Application Export:
 --   Application:     101
 --   Name:            OmniOpsys
---   Date and Time:   01:46 Thursday September 24, 2026
+--   Date and Time:   20:47 Saturday September 26, 2026
 --   Exported By:     OMNIOPSYS_J
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                     18
---       Items:                   25
+--     Pages:                     19
+--       Items:                   26
 --       Validations:              1
---       Processes:               15
---       Regions:                 47
+--       Processes:               16
+--       Regions:                 49
 --       Buttons:                 29
 --       Dynamic Actions:         11
 --     Shared Components:
 --       Logic:
+--         Items:                  7
 --         App Settings:           1
 --         Build Options:          5
 --       Navigation:
@@ -53,7 +54,7 @@ prompt APPLICATION 101 - OmniOpsys
 --         Breadcrumbs:            1
 --           Entries:              2
 --       Security:
---         Authentication:         1
+--         Authentication:         2
 --         Authorization:          3
 --         ACL Roles:              3
 --       User Interface:
@@ -93,11 +94,12 @@ wwv_imp_workspace.create_flow(
 ,p_timestamp_format=>'DS'
 ,p_timestamp_tz_format=>'DS'
 ,p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'')
-,p_authentication_id=>wwv_flow_imp.id(28235645872473421)
+,p_authentication_id=>wwv_flow_imp.id(28600892853293000)
 ,p_application_tab_set=>1
-,p_logo_type=>'IT'
+,p_logo_type=>'T'
 ,p_logo=>'#APP_FILES#icons/logo oficial_OMNIOPSYS2.1.png'
 ,p_logo_text=>'OmniOpsys'
+,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
 ,p_flow_version=>'OmniOpsys 2026 Release 1.0'
@@ -106,7 +108,6 @@ wwv_imp_workspace.create_flow(
 ,p_browser_cache=>'N'
 ,p_browser_frame=>'D'
 ,p_runtime_api_usage=>'T'
-,p_security_scheme=>wwv_flow_imp.id(28242087819474301)
 ,p_rejoin_existing_sessions=>'N'
 ,p_csv_encoding=>'Y'
 ,p_auto_time_zone=>'N'
@@ -114,7 +115,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_value_01=>'OmniOpsys'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>8
-,p_version_scn=>265251588
+,p_version_scn=>268437339
 ,p_print_server_type=>'NATIVE'
 ,p_file_storage=>'DB'
 ,p_is_pwa=>'Y'
@@ -17273,6 +17274,76 @@ begin
 null;
 end;
 /
+prompt --application/shared_components/logic/application_items/codigo_empresa_activa
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28602853584470504)
+,p_name=>'CODIGO_EMPRESA_ACTIVA'
+,p_protection_level=>'I'
+,p_version_scn=>268310882
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/es_super_admin
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28602203244465870)
+,p_name=>'ES_SUPER_ADMIN'
+,p_protection_level=>'I'
+,p_version_scn=>268310808
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/id_empresa_activa
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28602439463467275)
+,p_name=>'ID_EMPRESA_ACTIVA'
+,p_protection_level=>'I'
+,p_version_scn=>268310834
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/id_persona
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28602061721464581)
+,p_name=>'ID_PERSONA'
+,p_protection_level=>'I'
+,p_version_scn=>268310790
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/id_usuario
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28601828310461992)
+,p_name=>'ID_USUARIO'
+,p_protection_level=>'I'
+,p_version_scn=>268310714
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/logo_empresa_activa
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28603047821472162)
+,p_name=>'LOGO_EMPRESA_ACTIVA'
+,p_protection_level=>'I'
+,p_version_scn=>268310905
+);
+end;
+/
+prompt --application/shared_components/logic/application_items/nombre_empresa_activa
+begin
+wwv_flow_imp_shared.create_flow_item(
+ p_id=>wwv_flow_imp.id(28602684423469335)
+,p_name=>'NOMBRE_EMPRESA_ACTIVA'
+,p_protection_level=>'I'
+,p_version_scn=>268310863
+);
+end;
+/
 prompt --application/shared_components/logic/application_settings
 begin
 wwv_flow_imp_shared.create_app_setting(
@@ -19359,6 +19430,22 @@ wwv_flow_imp_shared.create_authentication(
 );
 end;
 /
+prompt --application/shared_components/security/authentications/autenticación_omniopsys
+begin
+wwv_flow_imp_shared.create_authentication(
+ p_id=>wwv_flow_imp.id(28600892853293000)
+,p_name=>unistr('Autenticaci\00F3n OmniOpsys')
+,p_scheme_type=>'NATIVE_CUSTOM'
+,p_attribute_03=>'OMNIOPS.FN_AUTENTICAR_USUARIO'
+,p_attribute_05=>'N'
+,p_invalid_session_type=>'LOGIN'
+,p_logout_url=>'f?p=&APP_ID.:2:&SESSION.'
+,p_use_secure_cookie_yn=>'N'
+,p_ras_mode=>0
+,p_version_scn=>268367840
+);
+end;
+/
 prompt --application/user_interfaces/combined_files
 begin
 null;
@@ -19369,9 +19456,8 @@ begin
 wwv_flow_imp_page.create_page(
  p_id=>0
 ,p_name=>'Global Page'
-,p_step_title=>'Global Page'
 ,p_autocomplete_on_off=>'OFF'
-,p_page_template_options=>'#DEFAULT#'
+,p_group_id=>wwv_flow_imp.id(28243116957474345)
 ,p_protection_level=>'D'
 ,p_page_component_map=>'14'
 );
@@ -19393,10 +19479,10 @@ wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28250626625474515)
 ,p_plug_name=>'OmniOpsys'
 ,p_region_template_options=>'#DEFAULT#'
-,p_escape_on_http_output=>'Y'
 ,p_plug_template=>2674017834225413037
-,p_plug_display_sequence=>10
+,p_plug_display_sequence=>20
 ,p_plug_display_point=>'REGION_POSITION_01'
+,p_location=>null
 ,p_plug_source=>'ERP modular multiempresa'
 ,p_plug_query_num_rows=>15
 ,p_region_image=>'#APP_FILES#icons/app-icon-512.png'
@@ -19404,6 +19490,249 @@ wwv_flow_imp_page.create_page_plug(
   'expand_shortcuts', 'N',
   'output_as', 'HTML',
   'show_line_breaks', 'Y')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(28604172543531006)
+,p_plug_name=>'Modulos'
+,p_title=>'Modulos'
+,p_region_name=>'region_modulos'
+,p_region_template_options=>'#DEFAULT#:t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>2072724515482255512
+,p_plug_display_sequence=>10
+,p_query_type=>'SQL'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT ',
+'    p.ID_PROGRAMA                              AS ID_PROGRAMA,',
+'    p.NOMBRE_PROGRAMA                          AS NOMBRE_PROGRAMA,',
+'    p.DESCRIPCION_PROGRAMA                     AS DESCRIPCION_PROGRAMA,',
+'    p.PREFIJO_PROGRAMA                         AS PREFIJO_PROGRAMA,',
+'    NVL(p.ICONO_PROGRAMA, ''fa-cube'')           AS ICONO_PROGRAMA,',
+'    CASE ',
+unistr('        WHEN p.NOMBRE_PROGRAMA = ''Configuraciones'' THEN 3   -- P\00E1gina 3'),
+unistr('        WHEN p.NOMBRE_PROGRAMA = ''Finanzas'' THEN 4          -- P\00E1gina 4'),
+'        ELSE 1',
+'    END                                        AS PAGINA_DESTINO',
+'FROM OMNI_PROGRAMAS p',
+'WHERE p.ESTADO_PROGRAMA = ''ACTIVO''',
+'  -- Habilitado para la empresa activa',
+'  AND EXISTS (',
+'      SELECT 1 ',
+'      FROM OMNI_EMPRESA_PROGRAMA ep',
+'      WHERE ep.ID_EMPRESA = :ID_EMPRESA_ACTIVA',
+'        AND ep.ID_PROGRAMA = p.ID_PROGRAMA',
+'        AND ep.ESTADO_EMPRESA_PROGRAMA = ''ACTIVO''',
+'  )',
+'  -- Si es SUPER_ADMIN ve todos, si no, solo los que tiene rol',
+'  AND (',
+'      :ES_SUPER_ADMIN = ''S''',
+'      OR EXISTS (',
+'          SELECT 1',
+'          FROM OMNI_USUARIO_ROL ur',
+'          JOIN OMNI_ROLES r ON r.ID_ROL = ur.ID_ROL',
+'          WHERE ur.ID_USUARIO = :ID_USUARIO',
+'            AND ur.ID_EMPRESA = :ID_EMPRESA_ACTIVA',
+'            AND r.ID_PROGRAMA = p.ID_PROGRAMA',
+'            AND ur.ESTADO_USUARIO_ROL = ''ACTIVO''',
+'            AND r.ESTADO_ROL = ''ACTIVO''',
+'      )',
+'  )',
+'ORDER BY p.ORDEN_MENU_PROGRAMA;'))
+,p_lazy_loading=>true
+,p_plug_source_type=>'NATIVE_CARDS'
+,p_translate_title=>'N'
+,p_plug_query_num_rows_type=>'SCROLL'
+,p_show_total_row_count=>false
+);
+wwv_flow_imp_page.create_card(
+ p_id=>wwv_flow_imp.id(28604295551531007)
+,p_region_id=>wwv_flow_imp.id(28604172543531006)
+,p_layout_type=>'GRID'
+,p_title_adv_formatting=>false
+,p_title_column_name=>'NOMBRE_PROGRAMA'
+,p_sub_title_adv_formatting=>false
+,p_sub_title_column_name=>'DESCRIPCION_PROGRAMA'
+,p_body_adv_formatting=>false
+,p_second_body_adv_formatting=>false
+,p_icon_source_type=>'DYNAMIC_CLASS'
+,p_icon_class_column_name=>'ICONO_PROGRAMA'
+,p_icon_position=>'START'
+,p_media_adv_formatting=>false
+);
+end;
+/
+prompt --application/pages/page_00002
+begin
+wwv_flow_imp_page.create_page(
+ p_id=>2
+,p_name=>'Selector Empresa'
+,p_alias=>'SELECTOR-EMPRESA'
+,p_step_title=>'Selector Empresa'
+,p_warn_on_unsaved_changes=>'N'
+,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function seleccionarEmpresa(idEmpresa) {',
+'    apex.item("P2_ID_EMPRESA_SELECCIONADA").setValue(idEmpresa);',
+'    apex.submit({ request: "SELECCIONAR" });',
+'}',
+unistr('// Delegaci\00F3n de eventos: escucha clicks en CUALQUIER parte de la regi\00F3n'),
+'document.addEventListener("click", function(e) {',
+unistr('    // Buscar si el click fue dentro de una Card de la regi\00F3n'),
+'    var card = e.target.closest("#region_empresas .a-CardView");',
+'    ',
+'    if (card) {',
+'        // Si el click NO fue directamente en el link <a>, dispararlo',
+'        if (!e.target.closest("a")) {',
+'            var link = card.querySelector("a[onclick]");',
+'            if (link) {',
+'                link.click();',
+'            }',
+'        }',
+'    }',
+'});'))
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'#region_empresas .a-CardView {',
+'    cursor: pointer;',
+'    transition: transform 0.25s ease, box-shadow 0.25s ease;',
+'    border-radius: 20px !important;',
+'    overflow: hidden;',
+'    background: #c6d9e3;',
+'    border: 1px solid #349f81;',
+unistr('    max-width: 295px;           /* \2B05 achica la card */'),
+'}',
+'',
+'#region_empresas .a-CardView:hover {',
+'    transform: translateY(-4px);',
+'    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);',
+'}',
+'',
+'#region_empresas .a-CardView-media img {',
+'    border-radius: 0 !important;',
+unistr('    max-height: 135px;          /* \2B05 achica la imagen */'),
+'    object-fit: cover;',
+'}',
+'',
+'#region_empresas .a-CardView a {',
+'    text-decoration: none !important;',
+'    color: inherit !important;',
+'}',
+'',
+'#region_empresas .a-CardView-header {',
+unistr('    padding: 11px 15px !important;  /* \2B05 header m\00E1s compacto */'),
+'}',
+'',
+unistr('/* Header m\00E1s limpio */'),
+'#region_empresas .a-CardView-header {',
+'    padding: 12px 16px !important;',
+'}'))
+,p_step_template=>2979075366320325194
+,p_page_template_options=>'#DEFAULT#'
+,p_page_component_map=>'23'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(28603681478531001)
+,p_plug_name=>'Empresas del Usuario'
+,p_title=>'NOMBRE_EMPRESA'
+,p_region_name=>'region_empresas'
+,p_region_template_options=>'#DEFAULT#:t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc'
+,p_component_template_options=>'#DEFAULT#'
+,p_plug_template=>2072724515482255512
+,p_plug_display_sequence=>10
+,p_query_type=>'SQL'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT ',
+'    e.ID_EMPRESA                                        AS ID_EMPRESA,',
+'    e.CODIGO_EMPRESA                                    AS CODIGO_EMPRESA,',
+'    e.NOMBRE_EMPRESA                                    AS NOMBRE_EMPRESA,',
+'    NVL(e.NOMBRE_COMERCIAL_EMPRESA, e.NOMBRE_EMPRESA)   AS NOMBRE_COMERCIAL,',
+'    NVL(e.RUC_EMPRESA,0) AS RUC,',
+'    NVL(e.LOGO_URL_EMPRESA, ''#APP_FILES#icons/logo oficial_OMNIOPSYS2.1.png'') AS LOGO_URL,',
+'    ue.ES_EMPRESA_PRINCIPAL                             AS ES_PRINCIPAL',
+'FROM OMNI_USUARIO_EMPRESA ue',
+'JOIN OMNI_EMPRESAS e ',
+'    ON e.ID_EMPRESA = ue.ID_EMPRESA',
+'WHERE ue.ID_USUARIO = :ID_USUARIO',
+'  AND ue.ESTADO_USUARIO_EMPRESA = ''ACTIVO''',
+'  AND e.ESTADO_EMPRESA = ''ACTIVA''',
+'ORDER BY ue.ES_EMPRESA_PRINCIPAL DESC, e.NOMBRE_EMPRESA;'))
+,p_lazy_loading=>true
+,p_plug_source_type=>'NATIVE_CARDS'
+,p_plug_query_num_rows=>15
+,p_plug_query_num_rows_type=>'SET'
+,p_show_total_row_count=>false
+,p_landmark_type=>'banner'
+);
+wwv_flow_imp_page.create_card(
+ p_id=>wwv_flow_imp.id(28603712629531002)
+,p_region_id=>wwv_flow_imp.id(28603681478531001)
+,p_layout_type=>'GRID'
+,p_grid_column_count=>4
+,p_title_adv_formatting=>true
+,p_title_html_expr=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<a href="javascript:void(0);" onclick="seleccionarEmpresa(&ID_EMPRESA.);" style="text-decoration:none; color:inherit; display:block;">',
+'    &NOMBRE_EMPRESA.',
+'</a>'))
+,p_sub_title_adv_formatting=>true
+,p_sub_title_html_expr=>'RUC.: &RUC.'
+,p_body_adv_formatting=>true
+,p_body_html_expr=>'Empresa.: <br> &CODIGO_EMPRESA.'
+,p_second_body_adv_formatting=>false
+,p_icon_source_type=>'URL'
+,p_icon_image_url=>'&LOGO_URL.'
+,p_icon_css_classes=>'fa-cubes'
+,p_icon_position=>'START'
+,p_media_adv_formatting=>false
+,p_media_source_type=>'STATIC_URL'
+,p_media_url=>'&LOGO_URL.'
+,p_media_display_position=>'BODY'
+,p_media_sizing=>'FIT'
+);
+wwv_flow_imp_page.create_page_branch(
+ p_id=>wwv_flow_imp.id(28604064594531005)
+,p_branch_name=>'Ir a Home'
+,p_branch_action=>'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'AFTER_PROCESSING'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>10
+,p_branch_condition_type=>'REQUEST_EQUALS_CONDITION'
+,p_branch_condition=>'SELECCIONAR'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(28603899383531003)
+,p_name=>'P2_ID_EMPRESA_SELECCIONADA'
+,p_item_sequence=>20
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'value_protected', 'N')).to_clob
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(28603999247531004)
+,p_process_sequence=>10
+,p_process_point=>'ON_SUBMIT_BEFORE_COMPUTATION'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'SeleccionarEmpresa'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_nombre    VARCHAR2(150);',
+'    v_codigo    NUMBER;',
+'    v_logo      VARCHAR2(500);',
+'BEGIN',
+'    SELECT NOMBRE_EMPRESA, CODIGO_EMPRESA, LOGO_URL_EMPRESA',
+'      INTO v_nombre, v_codigo, v_logo',
+'      FROM OMNI_EMPRESAS',
+'     WHERE ID_EMPRESA = :P2_ID_EMPRESA_SELECCIONADA',
+'       AND ESTADO_EMPRESA = ''ACTIVA'';',
+'',
+'    APEX_UTIL.SET_SESSION_STATE(''ID_EMPRESA_ACTIVA'', :P2_ID_EMPRESA_SELECCIONADA);',
+'    APEX_UTIL.SET_SESSION_STATE(''NOMBRE_EMPRESA_ACTIVA'', v_nombre);',
+'    APEX_UTIL.SET_SESSION_STATE(''CODIGO_EMPRESA_ACTIVA'', v_codigo);',
+'    APEX_UTIL.SET_SESSION_STATE(''LOGO_EMPRESA_ACTIVA'', NVL(v_logo, ''#APP_FILES#icons/logo oficial_OMNIOPSYS2.1.png''));',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'SELECCIONAR'
+,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_internal_uid=>28603999247531004
 );
 end;
 /
